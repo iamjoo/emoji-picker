@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="emojis-pane">
+    <button (click)="selectEmoji()" mat-button>Emoji</button>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="category-bar">
+    <section
+        [class.active]="(selectedCategory$ | async) === 'smileys'"
+        class="category-icon"
+        (click)="categorySelected('smileys')">
+      <mat-icon>faces</mat-icon>
+    </section>
+    <section
+        [class.active]="(selectedCategory$ | async) === 'animals'"
+        class="category-icon"
+        (click)="categorySelected('animals')">
+      <mat-icon>pets</mat-icon>
+    </section>
+    <section
+        [class.active]="(selectedCategory$ | async) === 'food'"
+        class="category-icon"
+        (click)="categorySelected('food')">
+      <mat-icon>cake</mat-icon>
+    </section>
+    <section
+        [class.active]="(selectedCategory$ | async) === 'sports'"
+        class="category-icon"
+        (click)="categorySelected('sports')">
+      <mat-icon>directions_bike</mat-icon>
+    </section>
+  </div>
+</div>

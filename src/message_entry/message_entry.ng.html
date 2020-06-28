@@ -1,0 +1,12 @@
+<div class="container">
+  <button mat-icon-button>
+    <mat-icon>face</mat-icon>
+  </button>
+  <div
+      contenteditable="true"
+      data-placeholder="Enter a message"
+      id="message-entry"
+      (keyup.enter)="sendMessage()"></div>
+  <button (click)="sendMessage()" mat-button color="primary">Send</button>
+  <button (click)="clearMessages()" mat-button color="warn">Clear</button>
+</div>

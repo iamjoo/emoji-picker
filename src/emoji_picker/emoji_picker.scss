@@ -1,0 +1,31 @@
+.category-bar {
+  display: flex;
+  height: 40px;
+  justify-content: space-around;
+  user-select: none;
+}
+
+.category-icon {
+  align-items: center;
+  color: #5f6368;
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+
+  &.active {
+    border-bottom: 1px solid;
+    color: #00796b;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: 360px;
+}
+
+.emojis-pane {
+  flex: 1;
+}

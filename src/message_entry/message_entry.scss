@@ -1,0 +1,26 @@
+[contenteditable=true] {
+  &:focus {
+    outline: none;
+
+   &:empty:before {
+      color: #202124;
+      cursor: text;
+    }
+  }
+
+  &:empty:before {
+    color: #bdc1c6;
+    content: attr(data-placeholder);
+    cursor: text;
+  }
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#message-entry {
+  flex: 1;
+}
