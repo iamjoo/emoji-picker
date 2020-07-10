@@ -1,12 +1,38 @@
-<div class="container">
+<div class="container" dir="ltr">
   <button mat-icon-button>
     <mat-icon>face</mat-icon>
   </button>
-  <div
-      contenteditable="true"
-      data-placeholder="Enter a message"
-      id="message-entry"
-      (keyup.enter)="sendMessage()"></div>
-  <button (click)="sendMessage()" mat-button color="primary">Send</button>
+  <div class="message-entry-container">
+    <div
+        [attr.contenteditable]="isMessagingEnabled$ | async"
+        id="message-entry"
+        (keydown.enter)="sendMessage$.next($event)"
+        (keydown.shift.enter)="insertNewRow($event)"
+        (paste)="paste($event)">
+      <p>hi</p>
+      <P>de<img
+               src="https://www.gstatic.com/voice-fe/emoji/noto_v2/emoji_u1f600.png"
+               alt="test"
+               style="height: 24px"></P>
+      <p>hello</p>
+    </div>
+    <div
+        [class.visible]="(hasMessageEntered$ | async) === false"
+        class="placeholder">
+      {{placeholderText$ | async}}
+    </div>
+  </div>
+  <mat-slide-toggle
+      checked="true"
+      (change)="toggled($event)"
+      color="primary">
+    Enable send messages
+  </mat-slide-toggle>
+  <button
+      (click)="sendMessage$.next()"
+      [disabled]="sendButtonDisabled$ | async"
+      mat-button color="primary">
+    Send
+  </button>
   <button (click)="clearMessages()" mat-button color="warn">Clear</button>
 </div>

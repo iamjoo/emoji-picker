@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="emoji-section-header">{{categoryHeader}}</div>
+  <div class="emoji-section-body">
+    <div class="emoji-row" *ngFor="let emojiRow of emojiRows; index as row">
+      <div
+          class="emoji"
+          (click)="selectEmoji(glyph)"
+          (mouseover)="highlightEmoji(row, col)"
+          *ngFor="let glyph of emojisPerRow; index as col">
+        <img [alt]="glyph" [src]="getEmojiUrl(glyph)">
+      </div>
+    </div>
+    <!-- last row may have fewer emojis -->
+    <div class="emoji-row">
+      <div
+          class="emoji"
+          (click)="selectEmoji(glyph)"
+          *ngFor="let glyph of emojisInLastRow">
+        <img [alt]="glyph" [src]="getEmojiUrl(glyph)">
+      </div>
+    </div>
+  </div>
+</div>

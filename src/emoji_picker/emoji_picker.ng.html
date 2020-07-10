@@ -1,31 +1,62 @@
-<div class="container">
-  <div class="emojis-pane">
-    <button (click)="selectEmoji()" mat-button>Emoji</button>
+<div
+    class="container"
+    dir="ltr"
+    (keydown.arrowup)="changeHighlightedEmoji(direction.UP)"
+    (keydown.arrowdown)="changeHighlightedEmoji(direction.DOWN)"
+    (keydown.arrowleft)="changeHighlightedEmoji(direction.LEFT)"
+    (keydown.arrowright)="changeHighlightedEmoji(direction.RIGHT)"
+    (keydown.enter)="selectHighlightedEmoji()"
+    (keydown.shift.tab)="tabSwitchCategory($event)"
+    (keydown.tab)="tabSwitchCategory($event)"
+    tabindex="0">
+  <div cdkScrollable class="emojis-pane">
+    <!-- Smileys section -->
+    <emoji-section
+        categoryHeader="Smileys"
+        (emojiSelected)="emojiSelected($event)"
+        id="smileys-section"></emoji-section>
+    <!-- Animals section -->
+    <emoji-section
+        categoryHeader="Animals"
+        (emojiSelected)="emojiSelected($event)"
+        id="animals-section"></emoji-section>
+    <!-- Food section -->
+    <emoji-section
+        categoryHeader="Food"
+        (emojiSelected)="emojiSelected($event)"
+        id="food-section"></emoji-section>
+    <!-- Sports section -->
+    <emoji-section
+        categoryHeader="Sports"
+        (emojiSelected)="emojiSelected($event)"
+        id="sports-section"></emoji-section>
   </div>
   <mat-divider></mat-divider>
-  <div class="category-bar">
+  <div
+      class="category-bar"
+      *ngIf="selectedCategory$ | async as selectedCategory">
     <section
-        [class.active]="(selectedCategory$ | async) === 'smileys'"
+        [class.active]="selectedCategory === 'smileys'"
         class="category-icon"
-        (click)="categorySelected('smileys')">
+        (click)="selectCategory('smileys')">
       <mat-icon>faces</mat-icon>
     </section>
     <section
-        [class.active]="(selectedCategory$ | async) === 'animals'"
+        [class.active]="selectedCategory === 'animals'"
         class="category-icon"
-        (click)="categorySelected('animals')">
+        (click)="selectCategory('animals')">
       <mat-icon>pets</mat-icon>
     </section>
     <section
-        [class.active]="(selectedCategory$ | async) === 'food'"
+        [class.active]="selectedCategory === 'food'"
         class="category-icon"
-        (click)="categorySelected('food')">
+        (click)="selectCategory('food')">
       <mat-icon>cake</mat-icon>
     </section>
     <section
-        [class.active]="(selectedCategory$ | async) === 'sports'"
+        [class.active]="selectedCategory === 'sports'"
         class="category-icon"
-        (click)="categorySelected('sports')">
+        (click)="selectCategory('sports')">
       <mat-icon>directions_bike</mat-icon>
     </section>
   </div>

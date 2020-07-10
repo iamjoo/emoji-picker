@@ -1,3 +1,5 @@
-<div class="container">
-  <div *ngFor="let message of messages">message</div>
+<div
+    class="container"
+    *ngIf="messages$ | async as messages">
+  <div *ngFor="let message of messages">{{message}}</div>
 </div>

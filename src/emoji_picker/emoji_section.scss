@@ -1,0 +1,48 @@
+$gray-color: #5f6368;
+$light-gray-color: rgba(158,158,158,.5);
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.emoji {
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  margin: 2px;
+  width: 40px;
+
+  &.highlighted {
+    background-color: $light-gray-color;
+  }
+
+  img {
+    height: 30px;
+  }
+}
+
+.emoji-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.emoji-section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.emoji-section-header {
+  align-items: center;
+  background-color: white;
+  color: $gray-color;
+  display: flex;
+  flex-direction: row;
+  height: 36px;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+}
