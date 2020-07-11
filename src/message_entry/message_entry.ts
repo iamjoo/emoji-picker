@@ -28,6 +28,7 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnInit(): void {
     // better way to do placeholder?
+    // check on firefox and ie
 
     this.messageEntryEl = document.getElementById('message-entry');
     this.hasMessageEntered$ = this.createHasMessageEntered();
@@ -46,20 +47,8 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     this.destroy$.complete();
   }
 
-  private setupSendMessageClick(): void {
-    this.sendMessage$.pipe(
-        takeUntil(this.destroy$),
-        ).subscribe((event) => {
-          this.sendMessage(event);
-        });
-  }
-
   clearMessages(): void {
     this.messagesService.clearMessages();
-  }
-
-  toggled(event: MatSlideToggleChange): void {
-    this.isMessagingEnabled$.next(event.checked);
   }
 
   insertNewRow(event: KeyboardEvent): void {
@@ -130,10 +119,24 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     console.log(clipboardData);
 
     const pasteContents = clipboardData.split(/\r?\n/);
+
+    if (pasteContents.length === 1) {
+      const currentRange = selection.getRangeAt(0);
+      const currentRowEl = this.findContainingElInMessageEntry(
+          selection.getRangeAt(0).endContainer);
+
+      currentRange.deleteContents();
+      currentRange.insertNode(
+          document.createTextNode(pasteContents[0]));
+      currentRowEl.normalize();
+
+      selection.collapseToEnd();
+      return;
+    }
+
     let docFragment = document.createDocumentFragment();
     let extractedContents: DocumentFragment;
 
-    // bug -- if single-line paste, extracted contents never appended
     for (let i = 0; i < pasteContents.length; i++) {
       const pasteContent = pasteContents[i];
       console.log(pasteContent);
@@ -171,20 +174,22 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
         const lastInsertedRow = docFragment.lastChild;
         this.findContainingElInMessageEntry(
             selection.getRangeAt(0).endContainer).after(docFragment);
-        console.log(lastInsertedRow);
 
         if (extractedContents.hasChildNodes()) {
           lastInsertedRow.appendChild(extractedContents);
           lastInsertedRow.normalize();
         }
 
-        console.log(lastInsertedRow.lastChild);
         selection.collapse(
             lastInsertedRow.lastChild,
             lastInsertedRow.lastChild.textContent.length);
         selection.collapseToEnd();
       }
     }
+  }
+
+  toggled(event: MatSlideToggleChange): void {
+    this.isMessagingEnabled$.next(event.checked);
   }
 
   private createHasMessageEntered(): Observable<boolean> {
@@ -281,6 +286,14 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     this.messagesService.sendMessage(
         formatMessageForSending(this.messageEntryEl));
     this.messageEntryEl.textContent = null;
+  }
+
+  private setupSendMessageClick(): void {
+    this.sendMessage$.pipe(
+        takeUntil(this.destroy$),
+        ).subscribe((event) => {
+          this.sendMessage(event);
+        });
   }
 }
 

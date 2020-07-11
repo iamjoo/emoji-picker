@@ -1,0 +1,31 @@
+$color-enabled: #202124;
+$color-disabled: #bdc1c6;
+
+.text-area {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-entry-container {
+  margin: 4px;
+}
+
+.text-entry {
+  border: 1px solid black;
+  height: 80px;
+  padding: 4px;
+
+  &:empty:before {
+    color: $color-disabled;
+    content: attr(placeholder);
+  }
+
+  &:focus {
+    outline: none;
+
+    &:empty:before {
+      color: $color-enabled;
+    }
+  }
+}
