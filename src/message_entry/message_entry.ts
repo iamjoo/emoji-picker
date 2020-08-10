@@ -7,13 +7,15 @@ import {delay, distinctUntilChanged, filter, map, shareReplay, startWith, takeUn
 
 import {MessagesService} from '../messages_service/messages_service';
 
+const ANGULAR_ATTR_PREFIX = '_ngcontent';
+
 @Component({
   selector: 'message-entry',
   templateUrl: './message_entry.ng.html',
   styleUrls: ['./message_entry.scss'],
 })
 export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
-  readonly isMessagingEnabled$ = new ReplaySubject<boolean>();
+  readonly isMessagingEnabled$ = new ReplaySubject<boolean>(1);
   hasMessageEntered$: Observable<boolean>;
   placeholderText$: Observable<string>;
   sendButtonDisabled$: Observable<boolean>;
@@ -22,16 +24,24 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
   readonly sendMessage$ = new ReplaySubject<KeyboardEvent>();
   private readonly destroy$ = new ReplaySubject<void>(1);
 
+  private attrName: string;
+
   constructor(
       private readonly contentObserver: ContentObserver,
       private readonly messagesService: MessagesService) {}
 
   ngOnInit(): void {
     // better way to do placeholder?
+    // better way to get attrName for inserted <p>?
+    // better way to prevent deletion of first <p>?
     // check on firefox and ie
 
     this.messageEntryEl = document.getElementById('message-entry');
-    this.hasMessageEntered$ = this.createHasMessageEntered();
+    this.attrName = this.getAngularAttrName();
+    this.hasMessageEntered$ =
+        this.createHasMessageEntered().pipe(
+            shareReplay({bufferSize: 1, refCount: true}),
+            );
     this.placeholderText$ = this.createPlaceholderText();
     this.sendButtonDisabled$ = this.createSendButtonDisabled();
     this.setupSendMessageClick();
@@ -95,6 +105,7 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     // Create a new <p> element and either insert the extracted contents or
     // insert <br> if the extacted contents are empty
     const newRowEl = document.createElement('p');
+    newRowEl.setAttribute(this.attrName, '');
     if (extractedContents.hasChildNodes()) {
       newRowEl.appendChild(extractedContents);
     } else {
@@ -165,6 +176,7 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
       }
 
       const newEl = document.createElement('p');
+      newEl.setAttribute(this.attrName, '');
       newEl.appendChild(document.createTextNode(pasteContent));
       maybeInsertBr(newEl);
 
@@ -200,7 +212,6 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
             map(() => this.hasMessageEntered()),
             distinctUntilChanged(),
             startWith(this.hasMessageEntered()),
-            shareReplay(1),
             )
   }
 
@@ -216,7 +227,8 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     return combineLatest(
         this.isMessagingEnabled$, this.hasMessageEntered$).pipe(
             map(([isMessagingEnabled, hasMessageEntered]) => {
-              return !isMessagingEnabled || !hasMessageEntered;
+              return !isMessagingEnabled || !hasMessageEntered ||
+                  !this.hasNonEmptyMessage();
             }),
             )
   }
@@ -241,10 +253,36 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
     return null;
   }
 
+  /**
+   * Angular applies style encapsulation by adding an attribute that starts with
+   * `_ngcontent`. Previously, we could use `:host ::ng-deep` to pierce
+   * encapsulation for certain classes, but that is deprecated.
+   */
+  private getAngularAttrName(): string {
+    const attr = Array.from(this.messageEntryEl.attributes).find((attr) => {
+      return attr.name.startsWith(ANGULAR_ATTR_PREFIX);
+    });
+
+    return attr?.name ?? '';
+  }
+
   private hasMessageEntered(): boolean {
     return this.messageEntryEl.children.length > 1 ||
         !!this.messageEntryEl.textContent ||
         this.messageEntryEl.getElementsByTagName('img').length > 0;
+  }
+
+  private hasNonEmptyMessage(): boolean {
+    console.log(this.messageEntryEl.textContent);
+    if (this.messageEntryEl.textContent?.trim()) {
+      return true;
+    }
+
+    if (this.messageEntryEl.getElementsByTagName('img').length > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -268,6 +306,7 @@ export class MessageEntry implements AfterViewInit, OnDestroy, OnInit {
           }
 
           const newEl = document.createElement('p');
+          newEl.setAttribute(this.attrName, '');
           newEl.appendChild(document.createElement('br'));
           this.messageEntryEl.appendChild(newEl);
         });

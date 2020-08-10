@@ -9,7 +9,14 @@
 
 <div class="text-entry-container">
   Bare contenteditable for reference
-  <div class="text-entry" contenteditable="true" placeholder="Enter a message"></div>
+  <div
+      class="text-entry"
+      contenteditable="true"
+      id="bare-content"
+      (keydown)="bareKeydown()"
+      placeholder="Enter a message"></div>
+  <div>textContent below</div>
+  <div>{{bareTextContent | async}}</div>
 </div>
 
 <br>

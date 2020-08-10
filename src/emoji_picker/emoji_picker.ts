@@ -39,7 +39,9 @@ export class EmojiPicker implements AfterViewInit, OnDestroy, OnInit {
     this.destroy$.complete();
   }
 
-  changeHighlightedEmoji(direction: Direction): void {
+  changeHighlightedEmoji(event: KeyboardEvent, direction: Direction): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.changeHighlightedEmoji$.next(direction);
   }
 
@@ -58,7 +60,9 @@ export class EmojiPicker implements AfterViewInit, OnDestroy, OnInit {
     this.selectedCategory$.next(category);
   }
 
-  selectHighlightedEmoji(): void {
+  selectHighlightedEmoji(event: KeyboardEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.selectHighlightedEmoji$.next();
   }
 

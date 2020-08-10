@@ -1,11 +1,11 @@
 <div
     class="container"
     dir="ltr"
-    (keydown.arrowup)="changeHighlightedEmoji(direction.UP)"
-    (keydown.arrowdown)="changeHighlightedEmoji(direction.DOWN)"
-    (keydown.arrowleft)="changeHighlightedEmoji(direction.LEFT)"
-    (keydown.arrowright)="changeHighlightedEmoji(direction.RIGHT)"
-    (keydown.enter)="selectHighlightedEmoji()"
+    (keydown.arrowup)="changeHighlightedEmoji($event, direction.UP)"
+    (keydown.arrowdown)="changeHighlightedEmoji($event, direction.DOWN)"
+    (keydown.arrowleft)="changeHighlightedEmoji($event, direction.LEFT)"
+    (keydown.arrowright)="changeHighlightedEmoji($event, direction.RIGHT)"
+    (keydown.enter)="selectHighlightedEmoji($event)"
     (keydown.shift.tab)="tabSwitchCategory($event)"
     (keydown.tab)="tabSwitchCategory($event)"
     tabindex="0">
